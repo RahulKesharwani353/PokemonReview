@@ -1,19 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PokemonReviewApp.Data;
 using PokemonReviewApp;
+using PokemonReviewApp.Interface;
+using PokemonReviewApp.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddTransient<Seed>();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<IPokemonRepository, PokemonRepository>();
+
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddTransient<Seed>();
 
-builder.Services.AddEntityFrameworkNpgsql().AddDbContext<DataContext>(opt =>
-        opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddEntityFrameworkNpgsql().AddDbContext<DataContext>(opt => {
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+}
+        
+        );
 
 //builder.Services.AddDbContext<DataContext>(
 //        opts => opts.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))

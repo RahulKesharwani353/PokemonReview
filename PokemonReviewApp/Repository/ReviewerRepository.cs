@@ -17,7 +17,11 @@ namespace PokemonReviewApp.Repository
             _context = context;
             _mapper = mapper;
         }
-
+        public bool CreateReviewer(Reviewer reviewer)
+        {
+            _context.Add(reviewer);
+            return Save();
+        }
         public Reviewer GetReviewer(int reviewerId) => _context.Reviewers.Where(r => r.Id == reviewerId).Include(e => e.Reviews).FirstOrDefault();
 
         public ICollection<Reviewer> GetReviewers() => _context.Reviewers.ToList();
@@ -25,6 +29,13 @@ namespace PokemonReviewApp.Repository
         public ICollection<Review> GetReviewsByReviewer(int reviewerId) => _context.Reviews.Where(r => r.Reviewer.Id == reviewerId).ToList();
 
         public bool ReviewerExists(int reviewerId) => _context.Reviewers.Any(r => r.Id == reviewerId);
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0 ? true : false;
+        }
+
 
     }
 }

@@ -21,6 +21,12 @@ namespace PokemonReviewApp.Properties
 
         public bool CountryExists(int id) => _context.Countries.Any(c => c.Id == id);
 
+        public bool CreateCountry(Country country)
+        {
+            _context.Add(country);
+            return Save();
+        }
+
         public ICollection<Country> GetCountries() => _context.Countries.ToList();
 
         public Country GetCountry(int id) => _context.Countries.Where(c => c.Id == id).FirstOrDefault();
@@ -28,6 +34,12 @@ namespace PokemonReviewApp.Properties
         public Country GetCountryByOwner(int ownerId) => _context.Owners.Where(o => o.Id == ownerId).Select(c => c.Country).FirstOrDefault();
 
         public ICollection<Owner> GetOwnersFromCounty(int countryId) => _context.Owners.Where(c => c.Country.Id == countryId).ToList();
+
+        public bool Save()
+        {
+            var saved = _context.SaveChanges();
+            return saved > 0;
+        }
     }
 }
 
